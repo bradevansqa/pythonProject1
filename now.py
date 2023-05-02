@@ -237,6 +237,11 @@ def test_data():
     response2 = requests.post(url, json=payload)
     assert response2.status_code == 200
 
+    assert count_gender() == female_count, male_count
+    assert count_by_country() == country_counts
+    assert get_passwords_sorted_by_complexity() == passwords
+
+
 
 
 
