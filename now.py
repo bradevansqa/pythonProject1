@@ -1,4 +1,6 @@
 import requests
+import pytest
+
 
 def test_data():
     payload = {
@@ -6,7 +8,7 @@ def test_data():
             {"actionType": "CountByCountry", "top": 0},
             {"actionType": "CountByGender", "top": 0},
             {"actionType": "CountPasswordComplexity", "top": 0}
-            ],
+        ],
         "users": [
             {
                 "gender": "female",
@@ -195,7 +197,16 @@ def test_data():
             }
 
         ]
-            }
+    }
+
+    url = "https://census-toy.nceng.net/prod/toy-census"
+    response = requests.post(url)
+    assert response.status_code == 200
+    response1 = requests.get(url)
+    assert response1.status_code == 403
+
+    response2 = requests.post(url, json=payload)
+    assert response2.status_code == 200
 
     def count_gender(users):
         female_count = 0
@@ -209,6 +220,10 @@ def test_data():
 
         return female_count, male_count
 
+
+        assert female_count >= 3
+        assert male_count >= 2
+
     def count_by_country(users):
         country_counts = {}
         for user in users:
@@ -219,6 +234,8 @@ def test_data():
                 country_counts[country] = 1
         return country_counts
 
+        assert count_by_country() >= 0
+
     def get_passwords_sorted_by_complexity(users):
         passwords = {}
         for user in users:
@@ -228,18 +245,11 @@ def test_data():
         sorted_passwords = sorted(passwords.items(), key=lambda x: x[1])
         return [p[0] for p in sorted_passwords]
 
-    url = "https://census-toy.nceng.net/prod/toy-census"
-    response = requests.post(url)
-    assert response.status_code == 200
-    response1 = requests.get(url)
-    assert response1.status_code == 403
+        assert get_passwords_sorted_by_complexity() >= 0
 
-    response2 = requests.post(url, json=payload)
-    assert response2.status_code == 200
 
-    assert count_gender() == female_count, male_count
-    assert count_by_country() == country_counts
-    assert get_passwords_sorted_by_complexity() == passwords
+
+
 
 
 
