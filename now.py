@@ -197,8 +197,36 @@ def test_data():
         ]
             }
 
+    def count_gender(users):
+        female_count = 0
+        male_count = 0
 
+        for user in users:
+            if user['gender'] == 'female':
+                female_count += 1
+            elif user['gender'] == 'male':
+                male_count += 1
 
+        return female_count, male_count
+
+    def count_by_country(users):
+        country_counts = {}
+        for user in users:
+            country = user['nat']
+            if country in country_counts:
+                country_counts[country] += 1
+            else:
+                country_counts[country] = 1
+        return country_counts
+
+    def get_passwords_sorted_by_complexity(users):
+        passwords = {}
+        for user in users:
+            password = user['password']
+            complexity = sum(not c.isalnum() for c in password)
+            passwords[password] = complexity
+        sorted_passwords = sorted(passwords.items(), key=lambda x: x[1])
+        return [p[0] for p in sorted_passwords]
 
     url = "https://census-toy.nceng.net/prod/toy-census"
     response = requests.post(url)
@@ -208,6 +236,8 @@ def test_data():
 
     response2 = requests.post(url, json=payload)
     assert response2.status_code == 200
+
+
 
 
 
